@@ -1,0 +1,212 @@
+﻿@page
+@{
+    ViewData["Title"] = "Home page";
+    Layout = "_Layout";
+}
+
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Add Item
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Item</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="LeftSleeve">Left sleeve</label>
+                                <select class="form-control" id="LeftSleeve">
+                                    <option>-5</option>
+                                    <option>-4</option>
+                                    <option>-3</option>
+                                    <option>-2</option>
+                                    <option>-1</option>
+                                    <option selected>0</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="RightSleeve">Right sleeve</label>
+                                <select class="form-control" id="RightSleeve">
+                                    <option>-5</option>
+                                    <option>-4</option>
+                                    <option>-3</option>
+                                    <option>-2</option>
+                                    <option>-1</option>
+                                    <option selected>0</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="LeftTrouser">Left trouser leg</label>
+                                <select class="form-control" id="LeftTrouser">
+                                    <option>-5</option>
+                                    <option>-4</option>
+                                    <option>-3</option>
+                                    <option>-2</option>
+                                    <option>-1</option>
+                                    <option selected>0</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="RightTrouser">Right trouser leg</label>
+                                <select class="form-control" id="RightTrouser">
+                                    <option>-5</option>
+                                    <option>-4</option>
+                                    <option>-3</option>
+                                    <option>-2</option>
+                                    <option>-1</option>
+                                    <option selected>0</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label for="CustomerName">Customer Name</label>
+                                <input type="text" class="form-control" id="CustomerName">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" onclick="addAlteration()" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-6">
+    <div class="form-group">
+        <label for="status">Status</label>
+        <select class="form-control" id="status">
+            <option value="0" selected>All</option>
+            <option value="1">Created</option>
+            <option value="2">Paid</option>
+            <option value="3">Done</option>
+        </select>
+    </div>
+</div>
+<div id="divList" class="table-responsive"></div>
+
+
+<script>
+        
+    $(document).ready(function () {
+
+        getAlterations(0);
+
+        $("#status").change(function () {
+           getAlterations($("#status").val());
+
+    });
+  });
+
+    function getAlterations(status) {
+
+        $.ajax({
+
+            type: "GET",
+            url: "api/Alteration/Get/" + status,
+            success: function (data) {
+
+                var table = "<table class='table'><th>CustomerName</th><th>Status</th><th>Action</th>"
+                debugger;
+                for (var i = 0; i < data.length; i++) {
+                    table += "<tr><td>" + data[i].customerName + "</td><td>" + data[i].orderStatus + "</td><td><button style='margin-right:10px;' onclick='changeStatus(" + data[i].id + ", 2);'>Paid</button><button onclick='changeStatus(" + data[i].id + ", 3);'>ALter Finished</button></td></tr>";
+                }
+
+                table += "</table>"
+                $('#divList').html(table);
+
+            },
+            error: function (request, status, error) {
+                alert(request.responseText);
+            }
+        });
+    }
+
+    function changeStatus(id, status) {
+        $.ajax({
+            type: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            url: "api/Alteration/ChangeStatus",
+            data: JSON.stringify({ id: id, orderStatus: status }),
+            type: "POST",
+            success: function (data) {
+                if (data)
+                    getAlterations(0)
+                //alert(data);
+
+            },
+            error: function (request, status, error) {
+                alert(request.responseText);
+            }
+        });
+    }
+
+    function addAlteration() {
+
+        var dt = JSON.stringify({ leftSleeve: $('#LeftSleeve').val(), rightSleeve: $('#RightSleeve'), leftTrouser: $('#LeftTrouser').val(), rightTrouser: $('#RightTrouser').val() });
+
+        $.ajax({
+            type: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            url: "api/alteration/add",
+            data: JSON.stringify({ leftSleeve: $('#LeftSleeve').val(), rightSleeve: $('#RightSleeve').val(), leftTrouser: $('#LeftTrouser').val(), rightTrouser: $('#RightTrouser').val(), customerName: $('#CustomerName').val() }),
+            type: "POST",
+            success: function (data) {
+
+		getAlterations(0)
+                //alert(data);
+
+            },
+            error: function (request, status, error) {
+                alert(request.responseText);
+            }
+        });
+    }
+</script>
