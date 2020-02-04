@@ -15,7 +15,7 @@ namespace DomainModel.Model
         public Shorten(short left, short right)
         {
             Left = (left > 5 || left < -5) ? throw new ArgumentException("left is more or less than valid range!"): left;
-            Right = (right > 5 || right < -5) ? throw new ArgumentException("right is more or less than valid range!") : right; ;
+            Right = (right > 5 || right < -5) ? throw new ArgumentException("right is more or less than valid range!") : right; 
         }
         protected override IEnumerable<object> GetAtomicValues()
         {
