@@ -7,9 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Context
 {
     public class ApplicationContext : DbContext
-    {
-        // add-migration 'initial' -context Infrastructure.Context.ApplicationContext  
-        // update-database 'initial' -context Infrastructure.Context.ApplicationContext  
+    { 
         public const string DEFAULT_SCHEMA = "alter";
 
         public DbSet<OrderAlteration> OrderAlteraions { get; private set; }
